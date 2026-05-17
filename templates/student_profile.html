@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+  <h3 class="text-center mb-4">
+    <i class="bi bi-person-circle me-2"></i>
+    Student Profile
+  </h3>
+
+  <form method="POST" enctype="multipart/form-data">
+
+    <div class="mb-3">
+      <label class="form-label">Full Name</label>
+      <input
+        type="text"
+        name="full_name"
+        class="form-control"
+        value="{{ student.full_name if student else '' }}"
+        required
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Course</label>
+      <input
+        type="text"
+        name="course"
+        class="form-control"
+        value="{{ student.course if student else '' }}"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Branch</label>
+      <input
+        type="text"
+        name="branch"
+        class="form-control"
+        value="{{ student.branch if student else '' }}"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Graduation Year</label>
+      <input
+        type="number"
+        name="graduation_year"
+        class="form-control"
+        value="{{ student.graduation_year if student else '' }}"
+        min="2000"
+        max="2100"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">CGPA</label>
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        max="10"
+        name="cgpa"
+        class="form-control"
+        value="{{ student.cgpa if student else '' }}"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Contact</label>
+      <input
+        type="text"
+        name="contact"
+        class="form-control"
+        value="{{ student.contact if student else '' }}"
+      >
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Skills</label>
+      <input
+        type="text"
+        name="skills"
+        class="form-control"
+        value="{{ student.skills if student else '' }}"
+      >
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Project</label>
+      <input
+        type="text"
+        name="project"
+        class="form-control"
+        value="{{ student.project if student else '' }}"
+      >
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">Upload CV</label>
+      <input
+        type="file"
+        name="cv"
+        class="form-control"
+        accept=".pdf,.doc,.docx"
+      >
+
+      {% if student and student.cv_file %}
+      <small class="text-success">
+        Uploaded CV:
+        <a href="{{ url_for('static', filename='uploads/cvs/' + student.cv_file) }}" target="_blank">
+          View CV
+        </a>
+      </small>
+      {% endif %}
+
+    </div>
+
+    <div class="d-grid">
+      <button class="btn btn-primary">
+        {% if student %}
+        Update Profile
+        {% else %}
+        Create Profile
+        {% endif %}
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base2.html" %}
+{% block title %}Edit Placement Drive{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3 class="mb-4">Edit Placement Drive</h3>
+
+<form method="POST">
+
+<div class="mb-3">
+<label class="form-label">Job Title</label>
+<input type="text" name="job_title" class="form-control"
+       value="{{ drive.job_title }}" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Job Description</label>
+<textarea name="job_description" class="form-control" rows="3">{{ drive.job_description }}</textarea>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Eligibility</label>
+<input type="text" name="eligibility" class="form-control"
+       value="{{ drive.eligibility }}">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Salary</label>
+<input type="text" name="salary" class="form-control"
+       value="{{ drive.salary }}">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Location</label>
+<input type="text" name="location" class="form-control"
+       value="{{ drive.location }}">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Deadline</label>
+<input type="date" name="deadline" class="form-control"
+       value="{{ drive.deadline }}">
+</div>
+
+<button type="submit" class="btn btn-success">
+Update Drive
+</button>
+
+<a href="{{ url_for('dashboard_functions', role='Company') }}"
+   class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "base2.html" %}
+{% block title %}Drive Applications{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3 class="fw-bold mb-4">
+Applications for {{ drive.job_title }} ({{ drive.company.name }})
+</h3>
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+
+<tr>
+<th>ID</th>
+<th>Student Name</th>
+<th>Course</th>
+<th>Branch</th>
+<th>CGPA</th>
+<th>Contact</th>
+<th>Skills</th>
+<th>Project</th>
+<th>CV</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% if applications %}
+
+{% for app in applications %}
+
+<tr>
+
+<td>{{ app.id }}</td>
+
+<td>{{ app.student.full_name }}</td>
+
+<td>{{ app.student.course }}</td>
+
+<td>{{ app.student.branch }}</td>
+
+<td>{{ app.student.cgpa }}</td>
+
+<td>{{ app.student.contact }}</td>
+
+<td>{{ app.student.skills }}</td>
+
+<td>{{ app.student.project }}</td>
+
+<td>
+
+{% if app.student.cv_file %}
+
+<a href="{{ url_for('static', filename='uploads/cvs/' ~ app.student.cv_file) }}"
+class="btn btn-sm btn-primary"
+target="_blank">
+
+View CV
+
+</a>
+
+{% else %}
+
+<span class="text-muted">No CV</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if app.status == "applied" %}
+<span class="badge bg-warning text-dark">Applied</span>
+
+{% elif app.status == "shortlisted" %}
+<span class="badge bg-info text-dark">Shortlisted</span>
+
+{% elif app.status == "selected" %}
+<span class="badge bg-success">Selected</span>
+
+{% elif app.status == "rejected" %}
+<span class="badge bg-danger">Rejected</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+{% else %}
+
+<tr>
+<td colspan="10" class="text-center text-muted">
+No applications found for this drive.
+</td>
+</tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<a href="{{ url_for('dashboard_functions', role='Admin') }}"
+class="btn btn-secondary mt-3">
+
+← Back to Dashboard
+
+</a>
+
+</div>
+
+{% endblock %}

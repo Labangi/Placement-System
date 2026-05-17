@@ -1,0 +1,322 @@
+{% extends "base2.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4 fw-bold">Admin Dashboard Overview</h3>
+
+<!--  STATISTICS CARDS  -->
+
+<div class="row mb-5">
+
+  <div class="col-md-3">
+    <div class="card text-center p-4 shadow-sm">
+      <i class="bi bi-people-fill fs-2 text-primary"></i>
+      <h6 class="mt-3">Total Students</h6>
+      <h2 class="fw-bold">{{ total_students }}</h2>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center p-4 shadow-sm">
+      <i class="bi bi-building fs-2 text-success"></i>
+      <h6 class="mt-3">Total Companies</h6>
+      <h2 class="fw-bold">{{ total_companies }}</h2>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center p-4 shadow-sm">
+      <i class="bi bi-briefcase-fill fs-2 text-warning"></i>
+      <h6 class="mt-3">Total Applications</h6>
+      <h2 class="fw-bold">{{ total_applications }}</h2>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center p-4 shadow-sm">
+      <i class="bi bi-calendar-event fs-2 text-danger"></i>
+      <h6 class="mt-3">Placement Drives</h6>
+      <h2 class="fw-bold">{{ total_drives }}</h2>
+    </div>
+  </div>
+
+</div>
+
+<hr class="my-4">
+
+<!--  SEARCH SECTION  -->
+
+<h5 class="mb-3">Search Section</h5>
+
+<div class="row mb-5">
+
+  <div class="col-md-6">
+    <div class="card p-4 shadow-sm">
+      <h6 class="fw-bold mb-3">Search Students</h6>
+
+      <form method="GET" action="{{ url_for('dashboard_functions', role='Admin') }}">
+        <div class="input-group">
+
+          <input type="text"
+                 name="student_search"
+                 class="form-control"
+                 placeholder="Search by Name / ID">
+
+          <button class="btn btn-primary">
+            <i class="bi bi-search"></i> Search
+          </button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card p-4 shadow-sm">
+      <h6 class="fw-bold mb-3">Search Companies</h6>
+
+      <form method="GET" action="{{ url_for('dashboard_functions', role='Admin') }}">
+        <div class="input-group">
+
+          <input type="text"
+                 name="company_search"
+                 class="form-control"
+                 placeholder="Search by Company Name">
+
+          <button class="btn btn-success">
+            <i class="bi bi-search"></i> Search
+          </button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<hr class="my-5">
+
+<!-- USER MANAGEMENT-->
+{% set query = request.args.get('student_search','') or request.args.get('company_search','') %}
+
+{% if query %}
+
+<h5 class="mb-3">Manage Users</h5>
+
+<table class="table table-bordered table-striped shadow-sm">
+
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Username</th>
+<th>Role</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for user in users %}
+
+{% if query.lower() in user.username.lower() or query.lower() in user.role.lower() %}
+
+<tr>
+
+<td>{{ user.id }}</td>
+<td>{{ user.username }}</td>
+<td>{{ user.role }}</td>
+
+<td>
+
+{% if user.status == "Active" %}
+<span class="badge bg-success">Active</span>
+
+{% elif user.status == "Inactive" %}
+<span class="badge bg-warning text-dark">Inactive</span>
+
+{% elif user.status == "Blacklisted" %}
+<span class="badge bg-danger">Blacklisted</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if user.status == "Active" %}
+
+<form action="{{ url_for('deactivate_user', user_id=user.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-warning">Deactivate</button>
+</form>
+
+<form action="{{ url_for('blacklist_user', user_id=user.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-danger">Blacklist</button>
+</form>
+
+{% elif user.status == "Inactive" %}
+
+<form action="{{ url_for('activate_user', user_id=user.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-success">Activate</button>
+</form>
+
+<form action="{{ url_for('blacklist_user', user_id=user.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-danger">Blacklist</button>
+</form>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endif %}
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endif %}
+
+<hr class="my-5">
+<!-- COMPANY APPROVAL  -->
+
+<h5 class="mb-3">Pending Company Approvals</h5>
+
+<table class="table table-bordered table-striped shadow-sm">
+
+<thead class="table-dark">
+
+<tr>
+<th>Username</th>
+<th>Role</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for users in inactive_users %}
+
+<tr>
+
+<td>{{ users.username }}</td>
+<td>{{ users.role }}</td>
+
+<td>
+<span class="badge bg-warning">Pending</span>
+</td>
+
+<td>
+
+<form action="{{ url_for('approve', user_id=users.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-success">Approve</button>
+</form>
+
+<form action="{{ url_for('reject', user_id=users.id) }}" method="POST" style="display:inline;">
+<button class="btn btn-sm btn-danger">Reject</button>
+</form>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<hr class="my-5">
+
+<!--  ALL PLACEMENT DRIVES  -->
+
+
+<h5 class="mb-3">All Placement Drives</h5>
+
+<table class="table table-bordered table-striped shadow-sm">
+
+<thead class="table-dark">
+
+<tr>
+<th>Company</th>
+<th>Job Title</th>
+<th>Deadline</th>
+<th>Status</th>
+<th>Applications</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for drive in all_drives %}
+
+<tr>
+
+<td>{{ drive.company.name }}</td>
+
+<td>{{ drive.job_title }}</td>
+
+<td>{{ drive.deadline }}</td>
+
+<td>
+
+{% if drive.status == "pending" %}
+<span class="badge bg-warning text-dark">Pending</span>
+
+{% elif drive.status == "approved" %}
+<span class="badge bg-success">Approved</span>
+
+{% elif drive.status == "closed" %}
+<span class="badge bg-secondary">Closed</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="{{ url_for('admin_view_applications', drive_id=drive.id) }}"
+class="btn btn-sm btn-primary">
+View Applications
+</a>
+
+</td>
+
+<td>
+
+{% if drive.status == "pending" %}
+
+<a href="{{ url_for('approve_drive', drive_id=drive.id) }}"
+class="btn btn-sm btn-success">
+Approve
+</a>
+
+<a href="{{ url_for('reject_drive', drive_id=drive.id) }}"
+class="btn btn-sm btn-danger">
+Reject
+</a>
+
+{% else %}
+
+<span class="text-muted">No Action</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,237 @@
+{% extends "base2.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4 fw-bold">Student Dashboard</h3>
+
+<!--PROFILE SECTION -->
+
+<div class="card mb-5 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title">My Profile</h5>
+
+    {% if student %}
+
+    <div class="row">
+      <div class="col-md-4">
+        <p><strong>Name:</strong> {{ student.full_name }}</p>
+      </div>
+
+      <div class="col-md-4">
+        <p><strong>CGPA:</strong> {{ student.cgpa }}</p>
+      </div>
+
+        <div class="col-md-4">
+        <p><strong>Graduation Year</strong> {{ student.graduation_year }}</p>
+      </div>
+    </div>
+
+    <a href="{{ url_for('create_student') }}"
+       class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-pencil-square me-1"></i>Edit Profile
+    </a>
+
+    {% else %}
+
+    <p class="text-danger">Profile not completed.</p>
+
+    <a href="{{ url_for('create_student') }}"
+       class="btn btn-primary btn-sm">
+      Complete Profile
+    </a>
+
+    {% endif %}
+
+  </div>
+</div>
+<!--SEARCH BAR-->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+
+    <form method="GET" action="{{ url_for('dashboard_functions', role='Student') }}">
+
+      <div class="input-group">
+
+        <input type="text"
+               name="search"
+               class="form-control"
+               placeholder="Search by company or role">
+
+        <button class="btn btn-primary">
+          <i class="bi bi-search"></i> Search
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<!--  AVAILABLE DRIVES -->
+
+<h5 class="mb-3">Available Placement Drives</h5>
+{% if drives%}
+<table class="table table-bordered table-striped shadow-sm">
+  <thead class="table-dark">
+    <tr>
+      <th>Company</th>
+      <th>Role</th>
+      <th>Deadline</th>
+      <th>Package</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  {% for drive in drives %}
+
+    <tr>
+      <td>{{ drive.company.name }}</td>
+      <td>{{ drive.job_title }}</td>
+      <td>{{ drive.deadline }}</td>
+      <td>{{ drive.salary }}</td>
+
+      <td>
+
+        {% if drive.id in applied_drive_ids %}
+
+          <span class="badge bg-secondary">Applied</span>
+
+        {% else %}
+
+          <a href="{{ url_for('apply_drive', drive_id=drive.id) }}"
+             class="btn btn-sm btn-primary">
+            Apply
+          </a>
+
+        {% endif %}
+
+      </td>
+
+    </tr>
+
+  {% endfor %}
+
+  </tbody>
+</table>
+
+{%else%}
+<div class="alert alert-info" role="alert">
+  No placement drives available
+</div>
+
+{%endif%}
+
+<hr class="my-5">
+
+<!--  MY APPLICATIONS -->
+
+<h4 class="mb-3">My Applications</h4>
+{% if applications%}
+<table class="table table-bordered table-striped shadow-sm">
+
+<thead class="table-dark">
+<tr>
+<th>Company</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for app in applications %}
+
+{% if app.status != "selected" %}
+
+<tr>
+
+<td>{{ app.drive.company.name }}</td>
+
+<td>{{ app.drive.job_title }}</td>
+
+<td>
+
+{% if app.status == "applied" %}
+<span class="badge bg-warning text-dark">Applied</span>
+
+{% elif app.status == "shortlisted" %}
+<span class="badge bg-info">Shortlisted</span>
+
+{% elif app.status == "rejected" %}
+<span class="badge bg-danger">Rejected</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endif %}
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{%else%}
+<div class="alert alert-info" role="alert">
+ No applications to track!
+</div>
+
+{%endif%}
+
+
+<!--  PLACEMENT HISTORY  -->
+
+<h4 class="mt-5">Placement History</h4>
+
+{% set selected_apps = applications | selectattr("status", "equalto", "selected") | list %}
+
+{% if selected_apps %}
+
+<table class="table table-bordered">
+
+<thead class="table-light">
+<tr>
+<th>Company</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for app in selected_apps %}
+
+<tr>
+
+<td>{{ app.drive.company.name }}</td>
+
+<td>{{ app.drive.job_title }}</td>
+
+<td>
+<span class="badge bg-success">Placed</span>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<div class="alert alert-info" role="alert">
+  No placement history available!
+</div>
+
+{% endif %}
+
+{% endblock %}

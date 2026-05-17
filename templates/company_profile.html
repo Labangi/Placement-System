@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Company Profile{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4 fw-bold">Company Profile</h3>
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
+<form method="POST">
+
+<!-- Company Name -->
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">Company Name</label>
+
+<input type="text"
+       name="name"
+       class="form-control"
+       value="{{ company.name if company else '' }}"
+       placeholder="Enter company name"
+       required>
+
+</div>
+
+<!-- HR Contact -->
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">HR Contact</label>
+
+<input type="text"
+       name="hr_contact"
+       class="form-control"
+       value="{{ company.hr_contact if company else '' }}"
+       placeholder="Enter HR contact number">
+
+</div>
+
+<!-- Website -->
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">Company Website</label>
+
+<input type="url"
+       name="website"
+       class="form-control"
+       value="{{ company.website if company else '' }}"
+       placeholder="https://example.com">
+
+</div>
+
+<!-- Buttons -->
+
+<div class="mt-4">
+
+<button type="submit" class="btn btn-primary">
+
+<i class="bi bi-save me-1"></i>
+
+{% if company %}
+Update Profile
+{% else %}
+Create Profile
+{% endif %}
+
+</button>
+
+<a href="{{ url_for('dashboard_functions', role='Company') }}"
+   class="btn btn-secondary ms-2">
+
+Cancel
+
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

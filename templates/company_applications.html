@@ -1,0 +1,92 @@
+{% extends "base2.html" %}
+{% block title %}Applications{% endblock %}
+
+{% block content %}
+
+<table class="table table-bordered table-striped">
+
+  <thead class="table-dark">
+    <tr>
+      <th>Student Name</th>
+      <th>Course</th>
+      <th>Branch</th>
+      <th>CGPA</th>
+      <th>Graduation Year</th>
+      <th>CV</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+{% for app in applications %}
+
+  <tr>
+
+<td>{{ app.student.full_name }}</td>
+<td>{{ app.student.course }}</td>
+<td>{{ app.student.branch }}</td>
+<td>{{ app.student.cgpa }}</td>
+<td>{{ app.student.graduation_year }}</td>
+
+<td>
+  {% if app.student.cv_file %}
+
+    <a href="{{ url_for('static', filename='uploads/cvs/' + app.student.cv_file) }}"
+       target="_blank"
+       class="btn btn-sm btn-info">
+       View CV
+    </a>
+
+    <a href="{{ url_for('static', filename='uploads/cvs/' + app.student.cv_file) }}"
+       download
+       class="btn btn-sm btn-success">
+       Download
+    </a>
+
+  {% else %}
+    <span class="text-danger">No CV Uploaded</span>
+  {% endif %}
+</td>
+
+<td>
+  {% if app.status == "applied" %}
+    <span class="badge bg-warning text-dark">Applied</span>
+  {% elif app.status == "shortlisted" %}
+    <span class="badge bg-info">Shortlisted</span>
+  {% elif app.status == "selected" %}
+    <span class="badge bg-success">Selected</span>
+  {% elif app.status == "rejected" %}
+    <span class="badge bg-danger">Rejected</span>
+  {% endif %}
+</td>
+
+<td>
+
+  <a href="{{ url_for('update_application', app_id=app.id, status='shortlisted') }}"
+     class="btn btn-sm btn-primary">
+     Shortlist
+  </a>
+
+  <a href="{{ url_for('update_application', app_id=app.id, status='selected') }}"
+     class="btn btn-sm btn-success">
+     Select
+  </a>
+
+  <a href="{{ url_for('update_application', app_id=app.id, status='rejected') }}"
+     class="btn btn-sm btn-danger">
+     Reject
+  </a>
+
+</td>
+
+
+  </tr>
+  {% endfor %}
+
+  </tbody>
+
+</table>
+
+{% endblock %}
