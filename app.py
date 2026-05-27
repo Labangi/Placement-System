@@ -959,23 +959,30 @@ def apply_drive(drive_id):
 
 # Application Initialisation
 
+with app.app_context():
+
+    db.create_all()
+    print("Database tables created")
+
+    admin = User.query.filter_by(username="admin").first()
+
+    if not admin:
+
+        admin = User(
+            username="admin",
+            password=generate_password_hash("admin123"),
+            role="Admin",
+            status="Active"
+        )
+
+        db.session.add(admin)
+        db.session.commit()
+
+        print("Admin user created")
+
+    else:
+        print("Admin already exists")
+
+
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-        print(" Database tables created")
-
-        admin = User.query.filter_by(username="admin").first()
-        if not admin:
-            admin = User(
-                username="admin",
-                password=generate_password_hash("admin123"),
-                role="Admin",
-                status="Active"
-            )
-            db.session.add(admin)
-            db.session.commit()
-            print(" Admin user created (username: admin, password: admin123)")
-        else:
-            print("Admin user already exists")
-
-    app.run(debug=True)
+    app.run(debug=False)
